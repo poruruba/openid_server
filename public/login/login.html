@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src * 'unsafe-inline'; media-src *; img-src * data: content: blob:;">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <title>サインイン</title>
+
+  <script src="js/methods_utils.js"></script>
+  <script src="js/vue_utils.js"></script>
+
+  <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+    <div id="top" class="container">
+        <h1>サインイン</h1>
+
+        <form method="get" v-bind:action="authorize_process">
+            <label>ユーザID</label>
+            <input type="text" name="userid" class="form-control">
+            <label>パスワード</label>
+            <input type="password" name="password" class="form-control">
+
+            <input type="hidden" name="client_id" v-model="client_id">
+            <input type="hidden" name="redirect_uri" v-model="redirect_uri">
+            <input type="hidden" name="response_type" v-model="response_type">
+            <input type="hidden" name="scope" v-model="scope">
+            <input type="hidden" name="state" v-model="state">
+            <br>
+            <button type="submit" class="btn btn-default">サインイン</button> 
+        </form>
+    </div>
+    
+    <script src="js/start_login.js"></script>
+</body>

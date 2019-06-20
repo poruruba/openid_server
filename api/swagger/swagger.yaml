@@ -1,0 +1,221 @@
+swagger: '2.0'
+info:
+  version: 'first version'
+  title: Lambda Laboratory Server
+host: localhost:10011
+basePath: /
+
+schemes:
+  - http
+  - https
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+  tokenAuth:
+    type: apiKey
+    in: header
+    name: Authorization
+  apikeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+#  jwtAuth:
+#    authorizationUrl: ""
+#    flow: "implicit"
+#    type: "oauth2"
+#    x-google-issuer: "https://cognito-idp.ap-northeast-1.amazonaws.com/【CognitoのプールID】"
+#    x-google-jwks_uri: "https://cognito-idp.ap-northeast-1.amazonaws.com/【CognitoのプールID】/.well-known/jwks.json"
+#    x-google-audiences: "【CognitoのアプリクライアントID】"
+
+paths:
+  /swagger:
+    x-swagger-pipe: swagger_raw
+
+  /test-post:
+    post:
+      x-swagger-router-controller: routing
+      operationId: test-post
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: "#/definitions/CommonRequest"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/CommonResponse"
+
+  /test-get:
+    get:
+      x-swagger-router-controller: routing
+      operationId: test-get
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/CommonResponse"
+
+  /oauth2/.well-known/openid-configuration:
+    get:
+      x-swagger-router-controller: routing
+      operationId: oauth2_openid_config
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /oauth2/.well-known/jwks.json:
+    get:
+      x-swagger-router-controller: routing
+      operationId: oauth2_jwks_json
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /oauth2/authorize_process:
+    get:
+      x-swagger-router-controller: routing
+      operationId: oauth2_authorize_process
+      parameters:
+        - in: query
+          name: client_id
+          required: true
+          type: string
+        - in: query
+          name: userid
+          required: true
+          type: string
+        - in: query
+          name: password
+          required: true
+          type: string
+        - in: query
+          name: redirect_uri
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /oauth2/authorize_direct:
+    get:
+      x-swagger-router-controller: routing
+      operationId: oauth2_authorize_direct
+      parameters:
+        - in: query
+          name: client_id
+          required: true
+          type: string
+        - in: query
+          name: userid
+          required: true
+          type: string
+        - in: query
+          name: scope
+          required: true
+          type: string
+        - in: query
+          name: state
+          type: string
+        - in: query
+          name: response_type
+          required: true
+          type: string
+        - in: query
+          name: redirect_uri
+          required: true
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /oauth2/authorize:
+    get:
+      x-swagger-router-controller: routing
+      operationId: oauth2_authorize
+      parameters:
+        - in: query
+          name: response_type
+          required: true
+          type: string
+        - in: query
+          name: client_id
+          required: true
+          type: string
+        - in: query
+          name: redirect_uri
+          required: true
+          type: string
+        - in: query
+          name: scope
+          type: string
+        - in: query
+          name: state
+          type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+  /oauth2/token:
+    post:
+      x-swagger-router-controller: routing
+      operationId: oauth2_token
+      security:
+        - basicAuth: []
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters:
+        - in: body
+          name: Oauth2TokenRequest
+          required: true
+          schema:
+            $ref: '#/definitions/Oauth2TokenRequest'
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+
+  CommonRequest:
+    type: object
+  CommonResponse:
+    type: object
+
+  Oauth2TokenRequest:
+    type: object
+    required:
+    - grant_type
+    properties:
+      grant_type:
+        type: string
+      client_id:
+        type: string
+      code:
+        type: string
+      scope:
+        type: string
+      redirect_uri:
+        type: string
+      refresh_token:
+        type: string
