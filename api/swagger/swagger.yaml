@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
   version: 'first version'
-  title: Lambda Laboratory Server
-host: localhost:10011
+  title: OpenID Connect Server
+host: localhost:10080
 basePath: /
 
 schemes:
@@ -37,31 +37,6 @@ paths:
   /swagger:
     x-swagger-pipe: swagger_raw
 
-  /test-post:
-    post:
-      x-swagger-router-controller: routing
-      operationId: test-post
-      parameters:
-        - in: body
-          name: body
-          schema:
-            $ref: "#/definitions/CommonRequest"
-      responses:
-        200:
-          description: Success
-          schema:
-            $ref: "#/definitions/CommonResponse"
-
-  /test-get:
-    get:
-      x-swagger-router-controller: routing
-      operationId: test-get
-      responses:
-        200:
-          description: Success
-          schema:
-            $ref: "#/definitions/CommonResponse"
-
   /oauth2/.well-known/openid-configuration:
     get:
       x-swagger-router-controller: routing
@@ -82,7 +57,7 @@ paths:
           schema:
             type: object
 
-  /oauth2/authorize_process:
+  /oauth2/authorize-process:
     get:
       x-swagger-router-controller: routing
       operationId: oauth2_authorize_process
@@ -109,7 +84,7 @@ paths:
           schema:
             type: object
 
-  /oauth2/authorize_direct:
+  /oauth2/authorize-direct:
     get:
       x-swagger-router-controller: routing
       operationId: oauth2_authorize_direct
@@ -181,11 +156,37 @@ paths:
       consumes:
         - application/x-www-form-urlencoded
       parameters:
-        - in: body
-          name: Oauth2TokenRequest
+        - in: formData
+          name: grant_type
+          type: string
           required: true
+        - in: formData
+          name: client_id
+          type: string
+        - in: formData
+          name: code
+          type: string
+        - in: formData
+          name: scope
+          type: string
+        - in: formData
+          name: redirect_uri
+          type: string
+        - in: formData
+          name: refresh_token
+          type: string
+      responses:
+        200:
+          description: Success
           schema:
-            $ref: '#/definitions/Oauth2TokenRequest'
+            type: object
+
+  /oauth2/userInfo:
+    get:
+      x-swagger-router-controller: routing
+      operationId: oauth2_user_info
+      security:
+        - tokenAuth: []
       responses:
         200:
           description: Success
@@ -201,21 +202,3 @@ definitions:
     type: object
   CommonResponse:
     type: object
-
-  Oauth2TokenRequest:
-    type: object
-    required:
-    - grant_type
-    properties:
-      grant_type:
-        type: string
-      client_id:
-        type: string
-      code:
-        type: string
-      scope:
-        type: string
-      redirect_uri:
-        type: string
-      refresh_token:
-        type: string
