@@ -10,7 +10,7 @@ var vue_options = {
         client_secret: '',
         code: '',
         refresh_token: '',
-        redirect_uri: base_url + '/login/redirect.html',
+        redirect_uri: './redirect.html',
         scope: '',
         state: null,
         id_token: null,
@@ -18,7 +18,7 @@ var vue_options = {
         refresh_token: null,
         expires_in: 0,
         token_state: null,
-        top_url: base_url + '/login/',
+        top_url: './index.html',
         usesrinfo_endpoint: base_url + '/oauth2/userInfo',
         userinfo: null
     },
