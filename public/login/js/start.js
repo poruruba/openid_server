@@ -1,3 +1,4 @@
+const page_url = 'http://localhost:10080';
 const base_url = 'http://localhost:10080';
 
 var vue_options = {
@@ -5,9 +6,8 @@ var vue_options = {
     data: {
         progress_title: '',
 
-        top_url: base_url + '/login/',
-        top_direct_url: base_url + '/login/index_direct.html',
-        redirect_uri: base_url + '/login/redirect.html',
+        top_direct_url: './index_direct.html',
+        redirect_uri: page_url + '/login/redirect.html',
         authorize_endpoint: base_url + '/oauth2/authorize',
         authorize_direct_endpoint: base_url + '/oauth2/authorize-direct'
     },
