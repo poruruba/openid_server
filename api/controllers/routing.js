@@ -4,8 +4,6 @@
 const func_table = {
 //  "test-func" : require('./test_func').handler,
 //  "test-dialogflow" : require('./test_dialogflow').fulfillment,
-"test-get" : require('./test-get').handler,
-"test-post" : require('./test-post').handler,
 
 "oauth2_authorize" : require('./oauth2').handler,
 "oauth2_token" : require('./oauth2').handler,
@@ -13,6 +11,7 @@ const func_table = {
 "oauth2_authorize_direct": require('./oauth2').handler,
 "oauth2_jwks_json" : require('./oauth2').handler,
 "oauth2_openid_config" : require('./oauth2').handler,
+"oauth2_user_info" : require('./oauth2').handler,
 };
 const alexa_table = {
 //  "test-alexa" : require('./test_alexa').handler,
@@ -50,7 +49,7 @@ for( var operationId in express_table ){
 module.exports = exports_list;
 
 function routing(req, res) {
-    console.log(req);
+//    console.log(req);
 
     var operationId = req.swagger.operation.operationId;
     console.log('[' + operationId + ' calling]');
