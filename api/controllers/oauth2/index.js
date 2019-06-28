@@ -2,7 +2,7 @@
 
 const base_url = process.env.BASE_URL || 'http://localhost:10080';
 const page_url = process.env.PAGE_URL || 'http://localhost:10080';
-const issuer = process.env.ISSUER || 'http://localhost:10080';
+const issuer = process.env.ISSUER || 'https://localhost';
 
 const login_url = process.env.LOGIN_URL || (page_url + '/login/login.html');
 const keyid = process.env.KEYID || 'testkeyid';
