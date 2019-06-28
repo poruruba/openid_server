@@ -190,7 +190,7 @@ exports.handler = (event, context, callback) => {
     }else if( event.path == '/oauth2/userInfo'){
         var token = event.requestContext.authorizer.claims;
         callback(null, new Response(token));
-    }else if( event.path == '/oauth2/.well-known/jwks.json'){
+    }else if( event.path == '/.well-known/jwks.json'){
         if( jwkjson == null ){
             jwkjson = {
                 keys: [
@@ -200,14 +200,14 @@ exports.handler = (event, context, callback) => {
         }
 
         callback(null, new Response(jwkjson));
-    }else if( event.path == '/oauth2/.well-known/openid-configuration' ){
+    }else if( event.path == '/.well-known/openid-configuration' ){
         var configjson = {
             authorization_endpoint: base_url + "/oauth2/authorize",
             id_token_signing_alg_values_supported: [
                 "RS256"
             ],
             issuer: issuer,
-            jwks_uri: base_url + "/oauth2/.well-known/jwks.json",
+            jwks_uri: base_url + "/.well-known/jwks.json",
             response_types_supported: [
                 "code",
                 "token"
