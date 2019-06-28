@@ -37,7 +37,7 @@ paths:
   /swagger:
     x-swagger-pipe: swagger_raw
 
-  /oauth2/.well-known/openid-configuration:
+  /.well-known/openid-configuration:
     get:
       x-swagger-router-controller: routing
       operationId: oauth2_openid_config
@@ -47,7 +47,7 @@ paths:
           schema:
             type: object
 
-  /oauth2/.well-known/jwks.json:
+  /.well-known/jwks.json:
     get:
       x-swagger-router-controller: routing
       operationId: oauth2_jwks_json
