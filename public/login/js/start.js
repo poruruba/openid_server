@@ -9,7 +9,7 @@ var vue_options = {
         top_direct_url: base_url + '/login/index_direct.html',
         redirect_uri: base_url + '/login/redirect.html',
         authorize_endpoint: base_url + '/oauth2/authorize',
-        authorize_direct_endpoint: base_url + '/oauth2/authorize_direct'
+        authorize_direct_endpoint: base_url + '/oauth2/authorize-direct'
     },
     computed: {
     },
