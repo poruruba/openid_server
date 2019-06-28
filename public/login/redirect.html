@@ -84,10 +84,15 @@
                 <p>{{state}}</p>
             </div>
             <br>
-            <button v-on:click="token_call()" class="btn btn-default">トークン生成</button> 
+            <button v-on:click="token_call()" class="btn btn-default">トークン生成</button>
         </div>
         <br>
-        <a v-bind:href="top_url">サインイン開始ページに戻る</a>
+        <button class="btn btn-default" v-on:click="get_userinfo()">userInfo</button><br>
+        <div v-if="userinfo">
+            <label>usesrinfo</label>
+            <p>{{userinfo}}</p>
+        </div>
+    <a v-bind:href="top_url">サインイン開始ページに戻る</a>
     </div>
     <script src="js/start_redirect.js"></script>
 </body>
