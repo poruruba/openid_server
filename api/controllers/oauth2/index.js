@@ -1,30 +1,37 @@
 'use strict';
 
 const base_url = process.env.BASE_URL || 'http://localhost:10080';
-const login_url = process.env.LOGIN_URL || (base_url + '/login/login.html');
+const page_url = process.env.PAGE_URL || 'http://localhost:10080';
+const issuer = process.env.ISSUER || 'http://localhost:10080';
+
+const login_url = process.env.LOGIN_URL || (page_url + '/login/login.html');
 const keyid = process.env.KEYID || 'testkeyid';
-const issuer = process.env.ISSUER || 'testissuer';
 const expire = process.env.EXPIRE || (60 * 60);
 
 const HELPER_BASE = process.env.HELPER_BASE || '../../helpers/';
 var Response = require(HELPER_BASE + 'response');
+var Redirect = require(HELPER_BASE + 'redirect');
 
 var fs = require('fs');
 var tojwks = require('rsa-pem-to-jwk');
 var jwt = require('jsonwebtoken');
+const { URL, URLSearchParams } = require('url');
 
 var jwkjson = null;
 var priv_pem = fs.readFileSync('./api/controllers/oauth2/jwks/privkey.pem');
 
 function make_access_token(client_id, scope){
-    var access_token = jwt.sign({token_use: 'access', scope: scope }, priv_pem, {
+    var payload_access_token = {
+        token_use: 'access',
+        scope: scope,
+        client_id: client_id,
+    };
+    var access_token = jwt.sign(payload_access_token, priv_pem, {
         algorithm: 'RS256',
         expiresIn: expire,
         issuer: issuer,
         subject: client_id,
         keyid: keyid
-//                "cognito:username": userid,
-//                client_id: client_id
     });
 
     var tokens = {
@@ -36,28 +43,35 @@ function make_access_token(client_id, scope){
 }
 
 function make_tokens(client_id, userid, scope, refresh = true){
-    var id_token = jwt.sign({token_use: 'id'}, priv_pem, {
+    var payload_id = {
+        token_use: 'id',
+        "cognito:username": userid,
+        email: userid + '@test.com',
+	};
+    var id_token = jwt.sign(payload_id, priv_pem, {
         algorithm: 'RS256',
         expiresIn: expire,
         audience: client_id,
         issuer: issuer,
         subject: userid,
         keyid: keyid,
-//                "cognito:username": userid,
-//                email: 'test@google.com'
     });
-    var access_token = jwt.sign({token_use: 'access', scope: scope }, priv_pem, {
+    var payload_access_token = {
+        token_use: 'access',
+        scope: scope,
+        "cognito:username": userid,
+        email: userid + '@test.com',
+    };
+    var access_token = jwt.sign(payload_access_token, priv_pem, {
         algorithm: 'RS256',
         expiresIn: expire,
         audience: client_id,
         issuer: issuer,
         subject: userid,
-        keyid: keyid
-//                "cognito:username": userid,
-//                email: 'test@google.com'
+        keyid: keyid,
     });
     if( refresh ){
-        var refresh_token = new Buffer(client_id + ':' + userid + ':' + scope).toString('base64');
+        var refresh_token = Buffer.from(client_id + ':' + userid + ':' + scope, 'ascii').toString('hex');
         var tokens = {
             "access_token" : access_token,
             "refresh_token" : refresh_token,
@@ -81,36 +95,15 @@ function make_tokens(client_id, userid, scope, refresh = true){
 
 exports.handler = (event, context, callback) => {
     if( event.path == '/oauth2/token'){
-        var body = JSON.parse(event.body);
+        var params = new URLSearchParams(event.body);
 
-        if( process.env.CLIENT_ID ){
-            var client_id = body.client_id;
-            if( process.env.CLIENT_ID != password ){
-                var response = new Response();
-                response.statusCode = 401;
-                response.set_error('client_id mismatch');
-                callback(null, response);
-                return;
-            }
-        }
-        if( process.env.CLIENT_SECRET ){
-            var client_secret = body.client_secret;
-            if( process.env.CLIENT_SECRET != client_secret ){
-                var response = new Response();
-                response.statusCode = 401;
-                response.set_error('client_secret mismatch');
-                callback(null, response);
-                return;
-            }
-        }
-
-        var grant_type = body.grant_type;
+        var grant_type = params.get('grant_type');
         if( grant_type == 'authorization_code' || grant_type == "refresh_token"){
             var code;
             if( grant_type == "refresh_token" )
-                code = new Buffer(body.refresh_token, 'base64').toString('ascii');
+                code = Buffer.from(params.get('refresh_token'), 'hex').toString('ascii');
             else
-                code = new Buffer(body.code, 'base64').toString('ascii');
+                code = Buffer.from(params.get('code'), 'hex').toString('ascii');
             var code_list = code.split(':');
             
             var client_id = code_list[0];
@@ -119,20 +112,16 @@ exports.handler = (event, context, callback) => {
 
             var tokens = make_tokens(client_id, userid, scope, grant_type != "refresh_token" );
 
-            var response = new Response();
-            response.set_body(tokens);
-            callback(null, response);
+            callback(null, new Response(tokens));
         }else if( grant_type == 'client_credentials'){
-            var scope = body.scope;
-            var client_id =body.client_id;
+            var scope = params.get('scope');
+            var client_id = params.get('client_id');
 
             var tokens = make_access_token(client_id, scope);
 
-            var response = new Response();
-            response.set_body(tokens);
-            callback(null, response);
+            callback(null, new Response(tokens));
         }
-    }else if( event.path == '/oauth2/authorize_process' ){
+    }else if( event.path == '/oauth2/authorize-process' ){
         var client_id = event.queryStringParameters.client_id;
         var userid = event.queryStringParameters.userid;
         var password = event.queryStringParameters.password;
@@ -141,48 +130,25 @@ exports.handler = (event, context, callback) => {
         var scope = event.queryStringParameters.scope;
         var state = event.queryStringParameters.state;
 
-        if( process.env.USERID ){
-            if( process.env.USERID != userid ){
-                var response = new Response();
-                response.statusCode = 401;
-                response.set_error('userid mismatch');
-                callback(null, response);
-                return;
-            }
-        }
-        if( process.env.PASSWORD ){
-            if( process.env.PASSWORD != password ){
-                var response = new Response();
-                response.statusCode = 401;
-                response.set_error('password mismatch');
-                callback(null, response);
-                return;
-            }
-        }
-
         if( response_type == 'token'){
             var tokens = make_tokens(client_id, userid, scope);
 
-            var response = new Response();
-            response.statusCode = 303;
-            response.headers.Location = redirect_uri + '#id_token=' + tokens.id_token + '&access_token=' + tokens.access_token + '&refresh_token=' + tokens.refresh_token 
+            var url = redirect_uri + '#id_token=' + tokens.id_token + '&access_token=' + tokens.access_token + '&refresh_token=' + tokens.refresh_token 
                                         + '&token_type=' + tokens.token_type + '&expires_in=' + tokens.expires_in;
             if( state )
-                response.headers.Location += '&state=' + state;
-            response.set_body(null);
-            callback(null, response);
-        }else if( response_type == 'code' ){
-            var code = new Buffer(client_id + ':' + userid + ':' + scope).toString('base64');
+                url += '&state=' + decodeURIComponent(state);
 
-            var response = new Response();
-            response.statusCode = 303;
-            response.headers.Location = redirect_uri + '?code=' + code;
+            callback(null, new Redirect(url));
+        }else if( response_type == 'code' ){
+            var code = Buffer.from(client_id + ':' + userid + ':' + scope, 'ascii').toString('hex');
+
+            var url = redirect_uri + '?code=' + code;
             if( state )
-                response.headers.Location += '&state=' + state;
-            response.set_body(null);
-            callback(null, response);
+                url += '&state=' + decodeURIComponent(state);
+
+            callback(null, new Redirect(url));
         }
-    }else if( event.path == '/oauth2/authorize_direct' ){
+    }else if( event.path == '/oauth2/authorize-direct' ){
         var redirect_uri = event.queryStringParameters.redirect_uri;
         var client_id = event.queryStringParameters.client_id;
         var userid = event.queryStringParameters.userid;
@@ -193,39 +159,37 @@ exports.handler = (event, context, callback) => {
         if( response_type == 'token'){
             var tokens = make_tokens(client_id, userid, scope);
 
-            var response = new Response();
-            response.statusCode = 303;
-            response.headers.Location = redirect_uri + '#id_token=' + tokens.id_token + '&access_token=' + tokens.access_token + '&refresh_token=' + tokens.refresh_token 
+            var url = redirect_uri + '#id_token=' + tokens.id_token + '&access_token=' + tokens.access_token + '&refresh_token=' + tokens.refresh_token 
                                         + '&token_type=' + tokens.token_type + '&expires_in=' + tokens.expires_in;
             if( state )
-                response.headers.Location += '&state=' + state;
-            response.set_body(null);
-            callback(null, response);
-        }else if( response_type == 'code' ){
-            var code = new Buffer(client_id + ':' + userid + ':' + scope).toString('base64');
+                url += '&state=' + decodeURIComponent(state);
 
-            var response = new Response();
-            response.statusCode = 303;
-            response.headers.Location = redirect_uri + '?code=' + code;
+            callback(null, new Redirect(url));
+        }else if( response_type == 'code' ){
+            var code = Buffer.from(client_id + ':' + userid + ':' + scope, 'ascii').toString('hex');
+
+            var url = redirect_uri + '?code=' + code;
             if( state )
-                response.headers.Location += '&state=' + state;
-            response.set_body(null);
-            callback(null, response);
+                url += '&state=' + decodeURIComponent(state);
+
+            callback(null, new Redirect(url));
         }
     }else if( event.path == '/oauth2/authorize' ){
+        console.log(event.queryStringParameters);
         var client_id = event.queryStringParameters.client_id;
         var redirect_uri = event.queryStringParameters.redirect_uri;
         var response_type = event.queryStringParameters.response_type;
         var scope = event.queryStringParameters.scope;
         var state = event.queryStringParameters.state;
 
-        var response = new Response();
-        response.statusCode = 303;
-        response.headers.Location = login_url + '?client_id=' + client_id + '&redirect_uri=' + redirect_uri + '&response_type=' + response_type + '&scope=' + scope;
+        var url = login_url + '?client_id=' + client_id + '&redirect_uri=' + redirect_uri + '&response_type=' + response_type + '&scope=' + scope;
         if( state )
-            response.headers.Location += '&state=' + state;
-        response.set_body(null);
-        callback(null, response);
+            url += '&state=' + encodeURIComponent(state);
+
+        callback(null, new Redirect(url));
+    }else if( event.path == '/oauth2/userInfo'){
+        var token = event.requestContext.authorizer.claims;
+        callback(null, new Response(token));
     }else if( event.path == '/oauth2/.well-known/jwks.json'){
         if( jwkjson == null ){
             jwkjson = {
@@ -233,11 +197,9 @@ exports.handler = (event, context, callback) => {
                     tojwks(priv_pem, {use: 'sig', kid: keyid, alg: 'RS256'}, 'pub')
                 ]
             };
-        };
+        }
 
-        var response = new Response();
-        response.set_body(jwkjson);
-        callback(null, response);
+        callback(null, new Response(jwkjson));
     }else if( event.path == '/oauth2/.well-known/openid-configuration' ){
         var configjson = {
             authorization_endpoint: base_url + "/oauth2/authorize",
@@ -264,8 +226,6 @@ exports.handler = (event, context, callback) => {
 //            userinfo_endpoint: base_url + "/oauth2/userInfo"
         };
 
-        var response = new Response();
-        response.set_body(configjson);
-        callback(null, response);
+        callback(null, new Response(configjson));
     }
 };
