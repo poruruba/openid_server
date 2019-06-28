@@ -18,7 +18,9 @@ var vue_options = {
         refresh_token: null,
         expires_in: 0,
         token_state: null,
-        top_url: base_url + '/login/'
+        top_url: base_url + '/login/',
+        usesrinfo_endpoint: base_url + '/oauth2/userInfo',
+        userinfo: null
     },
     computed: {
     },
@@ -45,6 +47,12 @@ var vue_options = {
                 this.expires_in = result.expires_in;
             });
         },
+        get_userinfo: function(){
+            do_get_token(this.usesrinfo_endpoint, this.access_token)
+            .then( result =>{
+                this.userinfo = result;
+            });
+        }
     },
     created: function(){
     },
@@ -88,10 +96,11 @@ function do_post_urlencoded(url, grant_type, client_id, client_secret, redirect_
         headers: headers
     })
     .then((response) => {
+        if( response.status != 200 )
+            throw 'status is not 200';
         return response.json();
     })
 }
-
 
 function do_post_basic(url, params, client_id, client_secret){
     var data = new URLSearchParams();
@@ -104,6 +113,20 @@ function do_post_basic(url, params, client_id, client_secret){
     return fetch(url, {
         method : 'POST',
         body : data,
+        headers: headers
+    })
+    .then((response) => {
+        if( response.status != 200 )
+            throw 'status is not 200';
+        return response.json();
+    })
+}
+
+function do_get_token(url, token){
+    const headers = new Headers( { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization' : 'Bearer' + token } );
+    
+    return fetch(url, {
+        method : 'GET',
         headers: headers
     })
     .then((response) => {

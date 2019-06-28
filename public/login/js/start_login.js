@@ -9,7 +9,7 @@ var vue_options = {
         response_type: '',
         scope: '',
         state: '',
-        authorize_process: base_url + '/oauth2/authorize_process'
+        authorize_process: base_url + '/oauth2/authorize-process'
     },
     computed: {
     },
