@@ -148,32 +148,6 @@ exports.handler = (event, context, callback) => {
 
             callback(null, new Redirect(url));
         }
-    }else if( event.path == '/oauth2/authorize-direct' ){
-        var redirect_uri = event.queryStringParameters.redirect_uri;
-        var client_id = event.queryStringParameters.client_id;
-        var userid = event.queryStringParameters.userid;
-        var response_type = event.queryStringParameters.response_type;
-        var scope = event.queryStringParameters.scope;
-        var state = event.queryStringParameters.state;
-
-        if( response_type == 'token'){
-            var tokens = make_tokens(client_id, userid, scope);
-
-            var url = redirect_uri + '#id_token=' + tokens.id_token + '&access_token=' + tokens.access_token + '&refresh_token=' + tokens.refresh_token 
-                                        + '&token_type=' + tokens.token_type + '&expires_in=' + tokens.expires_in;
-            if( state )
-                url += '&state=' + decodeURIComponent(state);
-
-            callback(null, new Redirect(url));
-        }else if( response_type == 'code' ){
-            var code = Buffer.from(client_id + ':' + userid + ':' + scope, 'ascii').toString('hex');
-
-            var url = redirect_uri + '?code=' + code;
-            if( state )
-                url += '&state=' + decodeURIComponent(state);
-
-            callback(null, new Redirect(url));
-        }
     }else if( event.path == '/oauth2/authorize' ){
         var client_id = event.queryStringParameters.client_id;
         var redirect_uri = event.queryStringParameters.redirect_uri;
