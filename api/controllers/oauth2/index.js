@@ -175,7 +175,6 @@ exports.handler = (event, context, callback) => {
             callback(null, new Redirect(url));
         }
     }else if( event.path == '/oauth2/authorize' ){
-        console.log(event.queryStringParameters);
         var client_id = event.queryStringParameters.client_id;
         var redirect_uri = event.queryStringParameters.redirect_uri;
         var response_type = event.queryStringParameters.response_type;
