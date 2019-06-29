@@ -84,40 +84,6 @@ paths:
           schema:
             type: object
 
-  /oauth2/authorize-direct:
-    get:
-      x-swagger-router-controller: routing
-      operationId: oauth2_authorize_direct
-      parameters:
-        - in: query
-          name: client_id
-          required: true
-          type: string
-        - in: query
-          name: userid
-          required: true
-          type: string
-        - in: query
-          name: scope
-          required: true
-          type: string
-        - in: query
-          name: state
-          type: string
-        - in: query
-          name: response_type
-          required: true
-          type: string
-        - in: query
-          name: redirect_uri
-          required: true
-          type: string
-      responses:
-        200:
-          description: Success
-          schema:
-            type: object
-
   /oauth2/authorize:
     get:
       x-swagger-router-controller: routing
