@@ -24,6 +24,9 @@ var vue_options = {
         userinfo: null
     },
     computed: {
+        logout_endpoint: function(){
+            return base_url + '/logout?client_id=' + this.client_id + '&logout_uri=' + this.redirect_uri;
+        }
     },
     methods: {
         token_call: function(){
