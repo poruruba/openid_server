@@ -92,7 +92,8 @@
             <label>usesrinfo</label>
             <p>{{userinfo}}</p>
         </div>
-    <a v-bind:href="top_url">サインイン開始ページに戻る</a>
+        <a class="btn btn-default" v-bind:href="logout_endpoint">ログアウト</a><br>
+        <a v-bind:href="top_url">サインイン開始ページに戻る</a>
     </div>
     <script src="js/start_redirect.js"></script>
 </body>
