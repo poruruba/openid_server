@@ -8,7 +8,6 @@ const func_table = {
 "oauth2_authorize" : require('./oauth2').handler,
 "oauth2_token" : require('./oauth2').handler,
 "oauth2_authorize_process": require('./oauth2').handler,
-"oauth2_authorize_direct": require('./oauth2').handler,
 "oauth2_jwks_json" : require('./oauth2').handler,
 "oauth2_openid_config" : require('./oauth2').handler,
 "oauth2_user_info" : require('./oauth2').handler,
