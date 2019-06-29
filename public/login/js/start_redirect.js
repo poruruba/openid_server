@@ -124,13 +124,15 @@ function do_post_basic(url, params, client_id, client_secret){
 }
 
 function do_get_token(url, token){
-    const headers = new Headers( { 'Content-Type': 'application/x-www-form-urlencoded', 'Authorization' : 'Bearer' + token } );
+    const headers = new Headers( { 'Authorization' : 'Bearer ' + token } );
     
     return fetch(url, {
         method : 'GET',
         headers: headers
     })
     .then((response) => {
+        if( response.status != 200 )
+            throw 'status is not 200';
         return response.json();
     })
 }
