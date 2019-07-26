@@ -87,6 +87,8 @@
             <button v-on:click="token_call()" class="btn btn-default">トークン生成</button>
         </div>
         <br>
+        <label>userinfo_endpoint</label>
+        <input type="text" name="usesrinfo_endpoint" class="form-control" v-model="usesrinfo_endpoint"><br>
         <button class="btn btn-default" v-on:click="get_userinfo()">userInfo</button><br>
         <div v-if="userinfo">
             <label>usesrinfo</label>
