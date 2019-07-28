@@ -1,5 +1,4 @@
 var base_url = 'http://localhost:10080';
-var page_url = 'http://localhost:10080';
 
 var vue_options = {
     el: "#top",
@@ -11,7 +10,7 @@ var vue_options = {
         client_secret: '',
         code: '',
         refresh_token: '',
-        redirect_uri: page_url + '/login/redirect.html',
+        redirect_uri: './redirect.html',
         scope: '',
         state: null,
         id_token: null,
