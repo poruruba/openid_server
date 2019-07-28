@@ -6,7 +6,7 @@ var vue_options = {
     data: {
         progress_title: '',
 
-        redirect_uri: page_url + './redirect.html',
+        redirect_uri: page_url + '/login/redirect.html',
         authorize_endpoint: base_url + '/oauth2/authorize',
         authorize_direct_endpoint: base_url + '/oauth2/authorize-direct'
     },
