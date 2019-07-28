@@ -1,5 +1,5 @@
 const base_url = 'http://localhost:10080';
-const page_url = "http://localhost:10080';
+const page_url = 'http://localhost:10080';
 
 var vue_options = {
     el: "#top",
