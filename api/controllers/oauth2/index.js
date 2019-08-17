@@ -16,6 +16,7 @@ var fs = require('fs');
 var tojwks = require('rsa-pem-to-jwk');
 var jwt = require('jsonwebtoken');
 const { URL, URLSearchParams } = require('url');
+var jwt_decode = require('jwt-decode');
 
 var jwkjson = null;
 const JWKS_BASE = process.env.JWKS_BASE || './api/controllers/oauth2/';
@@ -162,7 +163,8 @@ exports.handler = (event, context, callback) => {
 
         callback(null, new Redirect(url));
     }else if( event.path == '/oauth2/userInfo'){
-        var token = event.requestContext.authorizer.claims;
+        var token = jwt_decode(event.headers.Authorization);
+//        var token = event.requestContext.authorizer.claims;
         callback(null, new Response(token));
     }else if( event.path == '/.well-known/jwks.json'){
         if( jwkjson == null ){
