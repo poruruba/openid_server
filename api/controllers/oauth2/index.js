@@ -18,7 +18,8 @@ var jwt = require('jsonwebtoken');
 const { URL, URLSearchParams } = require('url');
 
 var jwkjson = null;
-var priv_pem = fs.readFileSync('./api/controllers/oauth2/jwks/privkey.pem');
+const JWKS_BASE = process.env.JWKS_BASE || './api/controllers/oauth2/';
+var priv_pem = fs.readFileSync(JWKS_BASE + 'jwks/privkey.pem');
 
 function make_access_token(client_id, scope){
     var payload_access_token = {
@@ -187,7 +188,8 @@ exports.handler = (event, context, callback) => {
             ],
             scopes_supported: [
                 "openid",
-                "profile"
+                "profile",
+		"email"
             ],
             subject_types_supported: [
                 "public"
