@@ -1,7 +1,7 @@
 'use strict';
 
-const REDIRECT_URL = 'https://home.poruru.work:3443/proxy/login.html';
-const COGNITO_URL = 'https://poruru.auth.ap-northeast-1.amazoncognito.com';
+const REDIRECT_URL = 'このページのURL';
+const COGNITO_URL = 'https://[ドメイン名].auth.ap-northeast-1.amazoncognito.com';
 
 //var vConsole = new VConsole();
 
