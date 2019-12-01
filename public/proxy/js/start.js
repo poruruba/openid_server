@@ -55,8 +55,6 @@ var vue_options = {
     },
     mounted: function(){
         proc_load();
-        
-        console.log(location);
     }
 };
 vue_add_methods(vue_options, methods_utils);
