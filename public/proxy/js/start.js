@@ -1,9 +1,9 @@
 'use strict';
 
-const REDIRECT_URL = 'https://home.poruru.work:3443/proxy/login.html';
-const CLIENT_ID = '74cs0f4uaaleeva4nlc4vmav70';
-const CLIENT_SECRET = 'suuel4qglpr1h899op8sfmqcujmq0lr70rimrpgbfqe8b3ig3d8';
-const COGNITO_URL = 'https://poruru.auth.ap-northeast-1.amazoncognito.com';
+const REDIRECT_URL = 'このページのURL';
+const CLIENT_ID = 'アプリクライアントID';
+const CLIENT_SECRET = 'アプリクライアントシークレット';
+const COGNITO_URL = 'https://[ドメイン名].auth.ap-northeast-1.amazoncognito.com';
 
 //var vConsole = new VConsole();
 
