@@ -28,7 +28,6 @@ var vue_options = {
         state: state.state
       };
       if (state.origin) {
-        console.log(state);
         window.opener.postMessage(message, state.origin);
       } else {
         window.opener.vue.do_token(message);
