@@ -1,6 +1,6 @@
 'use strict';
 
-const REDIRECT_URL = 'このページのURL';
+const REDIRECT_URL = 'ログイン専用ページのURL';
 const CLIENT_ID = 'アプリクライアントID';
 const CLIENT_SECRET = 'アプリクライアントシークレット';
 const COGNITO_URL = 'https://[ドメイン名].auth.ap-northeast-1.amazoncognito.com';
