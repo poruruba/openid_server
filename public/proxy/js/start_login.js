@@ -29,7 +29,6 @@ var vue_options = {
       };
       if (state.origin) {
         console.log(state);
-        console.log(window.opener);
         window.opener.postMessage(message, state.origin);
       } else {
         window.opener.vue.do_token(message);
@@ -48,14 +47,14 @@ vue_add_methods(vue_options, methods_utils);
 var vue = new Vue(vue_options);
 
 function auth_location(client_id, scope, state) {
-  var params = to_urlparam({
+  var params = {
     client_id: client_id,
     redirect_uri: REDIRECT_URL,
     response_type: 'code',
     state: state,
     scope: scope
-  });
-  window.location = COGNITO_URL + "/login" + params;
+  };
+  window.location = COGNITO_URL + "/login" + to_urlparam(params);
 }
 
 
