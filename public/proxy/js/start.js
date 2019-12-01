@@ -24,13 +24,13 @@ var vue_options = {
     },
     methods: {
         start_login: function(){
-            var param = to_urlparam( {
+            var params = {
                 origin : location.origin,
                 state: this.state,
                 client_id: CLIENT_ID,
                 scope: 'openid profile'
-            });
-            new_win = open(REDIRECT_URL + param, null, 'width=400,height=750');
+            };
+            new_win = open(REDIRECT_URL + to_urlparam(params), null, 'width=400,height=750');
         },
         do_token: function(message){
         	if( this.state != message.state ){
