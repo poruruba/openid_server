@@ -72,27 +72,19 @@ function make_tokens(client_id, userid, scope, refresh = true){
         subject: userid,
         keyid: keyid,
     });
+	
+    var tokens = {
+        access_token : access_token,
+        id_token : id_token,
+        token_type : "Bearer",
+        expires_in : expire
+    };
     if( refresh ){
         var refresh_token = Buffer.from(client_id + ':' + userid + ':' + scope, 'ascii').toString('hex');
-        var tokens = {
-            "access_token" : access_token,
-            "refresh_token" : refresh_token,
-            "id_token" : id_token,
-            "token_type" : "Bearer",
-            "expires_in" : expire
-        };
-
-        return tokens;
-    }else{
-        var tokens = {
-            "access_token" : access_token,
-            "id_token" : id_token,
-            "token_type" : "Bearer",
-            "expires_in" : expire
-        };
-
-        return tokens;
+        tokens.refresh_token = refresh_token;
     }
+
+    return tokens;
 }
 
 exports.handler = (event, context, callback) => {
