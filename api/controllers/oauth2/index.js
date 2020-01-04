@@ -61,8 +61,30 @@ function make_tokens(client_id, userid, scope, refresh = true){
     var payload_access_token = {
         token_use: 'access',
         scope: scope,
+        namename: userid,
         "cognito:username": userid,
         email: userid + '@test.com',
+        email_verified: true,
+        client_id: client_id,
+/*
+        address: '{ "address": "test_address"}',
+        phone_number: '01234567',
+        phone_number_verified: true,
+        name: 'a', 
+        given_name: 'a',
+        family_name: 'a',
+        middle_name: 'a',
+        nickname: 'a',
+        profile: 'a',
+        picture: 'a',
+        website: 'a',
+        gender: 'a',
+        birthdate: 'a',
+        zoneinfo: 'a', 
+        locale: 'a', 
+        updated_at: 0,
+        preferred_username: 'a',
+*/
     };
     var access_token = jwt.sign(payload_access_token, priv_pem, {
         algorithm: 'RS256',
@@ -150,9 +172,20 @@ exports.handler = (event, context, callback) => {
 
         callback(null, new Redirect(url));
     }else if( event.path == '/oauth2/userInfo'){
-        var token = jwt_decode(event.headers.Authorization);
-//        var token = event.requestContext.authorizer.claims;
-        callback(null, new Response(token));
+        if( event.httpMethod == 'GET'){
+//            var token = jwt_decode(event.headers.authorization);
+            var token = event.requestContext.authorizer.claims;
+            callback(null, new Response(token));
+        }else if( event.httpMethod == 'POST' ){
+            var body = JSON.parse(event.body);
+            var token;
+            if( !body.access_token ){
+                token = jwt_decode(event.headers.authorization);
+            }else{
+                token = jwt_decode(body.access_token);
+            }
+            callback(null, new Response(token));
+        }
     }else if( event.path == '/.well-known/jwks.json'){
         if( jwkjson == null ){
             jwkjson = {
