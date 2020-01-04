@@ -11,7 +11,7 @@ function parse_url_vars(param){
     var vars = {};
     for (let p of searchParams)
         vars[p[0]] = p[1];
-	
+
     return vars;
 }
 
