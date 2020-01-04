@@ -37,9 +37,9 @@ function make_access_token(client_id, scope){
     });
 
     var tokens = {
-        "access_token" : access_token,
-        "token_type" : "Bearer",
-        "expires_in" : expire
+        access_token : access_token,
+        token_type : "Bearer",
+        expires_in : expire
     };
     return tokens;
 }
