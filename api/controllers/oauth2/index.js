@@ -148,8 +148,10 @@ exports.handler = (event, context, callback) => {
     }else if( event.path == '/oauth2/authorize' ){
         var { client_id, redirect_uri, response_type, scope, state } = event.queryStringParameters;
 
-        var url = login_url + '?client_id=' + client_id + '&redirect_uri=' + redirect_uri + '&response_type=' + response_type + '&scope=' + scope;
-        if( state )
+        var url = login_url + '?client_id=' + client_id + '&redirect_uri=' + encodeURIComponent(redirect_uri) + '&response_type=' + response_type;
+        if( scope )
+            url += '&scope=' + encodeURIComponent(scope);
+	if( state )
             url += '&state=' + encodeURIComponent(state);
 
         callback(null, new Redirect(url));
