@@ -123,19 +123,15 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   // install middleware
   swaggerExpress.register(app);
 
-  app.get('*', function(req, res) {
+  app.all('*', function(req, res) {
     console.log('Unknown Endpoint');
     console.log('\tmethod=' + req.method);
     console.log('\tendpoint=' + req.originalUrl);
-    res.redirect('/');
+    if( req.swagger )
+      return;
+    res.sendStatus(404);
   });
-  app.post('*', function(req, res) {
-    console.log('Unknown Endpoint');
-    console.log('\tmethod=' + req.method);
-    console.log('\tendpoint=' + req.originalUrl);
-    res.redirect('/');
-  });
-
+    
   var port = Number(process.env.PORT) || 10080;
   console.log('http PORT=' + port);
   app.listen(port);
