@@ -125,13 +125,7 @@ exports.handler = (event, context, callback) => {
             callback(null, new Response(tokens));
         }
     }else if( event.path == '/oauth2/authorize-process' ){
-        var client_id = event.queryStringParameters.client_id;
-        var userid = event.queryStringParameters.userid;
-        var password = event.queryStringParameters.password;
-        var redirect_uri = event.queryStringParameters.redirect_uri;
-        var response_type = event.queryStringParameters.response_type;
-        var scope = event.queryStringParameters.scope;
-        var state = event.queryStringParameters.state;
+        var { client_id, userid, password, redirect_uri, response_type, scope, state } = event.queryStringParameters;
 
         if( response_type == 'token'){
             var tokens = make_tokens(client_id, userid, scope);
@@ -152,11 +146,7 @@ exports.handler = (event, context, callback) => {
             callback(null, new Redirect(url));
         }
     }else if( event.path == '/oauth2/authorize' ){
-        var client_id = event.queryStringParameters.client_id;
-        var redirect_uri = event.queryStringParameters.redirect_uri;
-        var response_type = event.queryStringParameters.response_type;
-        var scope = event.queryStringParameters.scope;
-        var state = event.queryStringParameters.state;
+        var { client_id, redirect_uri, response_type, scope, state } = event.queryStringParameters;
 
         var url = login_url + '?client_id=' + client_id + '&redirect_uri=' + redirect_uri + '&response_type=' + response_type + '&scope=' + scope;
         if( state )
