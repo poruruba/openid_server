@@ -6,7 +6,7 @@ const issuer = process.env.ISSUER || 'https://localhost';
 
 const login_url = process.env.LOGIN_URL || (page_url + '/login/login.html');
 const keyid = process.env.KEYID || 'testkeyid';
-const expire = process.env.EXPIRE || (60 * 60);
+const expire = 60 * 60;
 
 const HELPER_BASE = process.env.HELPER_BASE || '../../helpers/';
 var Response = require(HELPER_BASE + 'response');
