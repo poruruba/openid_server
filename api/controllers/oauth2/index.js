@@ -97,7 +97,8 @@ function make_tokens(client_id, userid, scope, refresh = true){
 
 exports.handler = (event, context, callback) => {
     if( event.path == '/oauth2/token'){
-        var params = new URLSearchParams(event.body);
+//        var params = new URLSearchParams(event.body);
+        var params = Object.entries(JSON.parse(event.body)).reduce((l,[k,v])=>l.set(k,v), new Map());
 
         var grant_type = params.get('grant_type');
         if( grant_type == 'authorization_code' || grant_type == "refresh_token"){
