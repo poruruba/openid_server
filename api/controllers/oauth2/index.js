@@ -62,7 +62,7 @@ function make_tokens(client_id, userid, scope, refresh = true){
     var payload_access_token = {
         token_use: 'access',
         scope: scope,
-        namename: userid,
+        name: userid,
         "cognito:username": userid,
         email: userid + '@test.com',
         email_verified: true,
